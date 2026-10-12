@@ -322,7 +322,7 @@ def log(light=False):
     body += (f'<polyline points="{pts}" fill="none" stroke="{RUST}" stroke-width="2.5" stroke-dasharray="{L}" stroke-dashoffset="{L}" opacity=".85">'
              f'<animate attributeName="stroke-dashoffset" values="{L};0;0" keyTimes="0;.85;1" dur="10s" repeatCount="indefinite"/></polyline>'
              f'<g><animateMotion path="M{pts.replace(" ", " L")}" dur="10s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;.85;1" calcMode="linear"/>{mark(0, 0, .06, ink)}</g>')
-    lines = [f'LOG {TODAY.strftime("%d %b %Y").upper()} · board refreshed · all missions nominal', 'CO-FOUNDED BY THE ARCHITECT · github.com/thearchitect0x-glitch',
+    lines = [f'LOG {TODAY.strftime("%d %b %Y").upper()} · board refreshed · all missions nominal', 'FOUNDED BY THE ARCHITECT & PRIMETIME',
              'LINEAGE · co-producer, Gaming Wall St (HBO Max, 2022) · deimoscore.com']
     body += ''.join(text(48, 48 + i * 24, l, 13, ink, .7 if i else .9, ls=1) for i, l in enumerate(lines))
     body += text(48, H - 30, 'DEIMOS AI LLC · KEEPING WATCH.', 26, ink, font=SANS, weight=900, ls=4)
@@ -339,7 +339,7 @@ def log(light=False):
         body += (f'<circle cx="{mx:.1f}" cy="{my:.1f}" r="7" fill="{ink}"/><circle cx="{mx:.1f}" cy="{my:.1f}" r="7" fill="none" stroke="{ink}" stroke-width="1.5">'
                  f'<animate attributeName="r" values="7;18" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values=".8;0" dur="2.4s" repeatCount="indefinite"/></circle>'
                  + text(ox, 222, f'DEIMOS · {t["angle"] % 360:.0f}° · SOURCE: JPL HORIZONS · {t["day"]}', 8.5, ink, .6, anchor='middle', ls=.5))
-    return svg(W, H, body, f'Mission log: Deimos AI LLC, co-founded by the Architect. Tonight: the moon Deimos at its real position around Mars, from NASA JPL Horizons.')
+    return svg(W, H, body, f'Mission log: Deimos AI LLC, founded by The Architect and PrimeTime. Tonight: the moon Deimos at its real position around Mars, from NASA JPL Horizons.')
 
 
 # ================================================================ THE AGENCY: a NASA-meatball-style emblem for Deimos
