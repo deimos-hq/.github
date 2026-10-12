@@ -142,7 +142,7 @@ def board():
     for i, (n, col, st, info) in enumerate(rows):
         y = 118 + i * 50
         body += (f'<circle cx="62" cy="{y - 6}" r="7" fill="{col}"><animate attributeName="opacity" values="1;.3;1" dur="{3 + i * .5:.1f}s" repeatCount="indefinite"/></circle>'
-                 + text(86, y, n, 20, col, weight=700, ls=3) + text(270, y, '▸ ' + st, 18, STAR, .9, ls=2) + text(452, y, info, 14, STAR, .6, ls=.5))
+                 + text(86, y, n, 20, col, weight=700, ls=3) + text(270, y, '▸ ' + st, 18, STAR, .9, ls=2) + text(476, y, info, 13, STAR, .6, ls=.3))
     # the big countdown, seven-segment style
     big = f'T–{DAYS}' if DAYS > 0 else 'LIFTOFF'
     body += (f'<rect x="{W - 360}" y="96" width="312" height="216" rx="14" fill="#0b0a12" stroke="{RUST}" stroke-opacity=".5"/>'
