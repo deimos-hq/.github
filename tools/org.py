@@ -323,7 +323,7 @@ def log(light=False):
              f'<animate attributeName="stroke-dashoffset" values="{L};0;0" keyTimes="0;.85;1" dur="10s" repeatCount="indefinite"/></polyline>'
              f'<g><animateMotion path="M{pts.replace(" ", " L")}" dur="10s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;.85;1" calcMode="linear"/>{mark(0, 0, .06, ink)}</g>')
     lines = [f'LOG {TODAY.strftime("%d %b %Y").upper()} · board refreshed · all missions nominal', 'CO-FOUNDED BY THE ARCHITECT · github.com/thearchitect0x-glitch',
-             'LINEAGE · co-producer, Gaming Wall St (HBO Max, 2022)']
+             'LINEAGE · co-producer, Gaming Wall St (HBO Max, 2022) · deimoscore.com']
     body += ''.join(text(48, 48 + i * 24, l, 13, ink, .7 if i else .9, ls=1) for i, l in enumerate(lines))
     body += text(48, H - 30, 'DEIMOS AI LLC · KEEPING WATCH.', 26, ink, font=SANS, weight=900, ls=4)
     # TONIGHT: Mars, Deimos's orbit and the moon at its real angle today
@@ -398,7 +398,7 @@ def ticker():
     p = A / 'tonight.json'
     if p.exists():
         tonight = f'TONIGHT: DEIMOS {json.loads(p.read_text())["angle"] % 360:.0f}° AROUND MARS (JPL HORIZONS)  ✦  '
-    items = ('DEIMOS AI LLC  ✦  MISSION CONTROL FOR THE AGE OF AGENTS  ✦  '
+    items = ('DEIMOS AI LLC · DEIMOSCORE.COM  ✦  MISSION CONTROL FOR THE AGE OF AGENTS  ✦  '
              + (f'CLOCKFORD PRIVATE BETA T–{DAYS}  ✦  ' if DAYS > 0 else 'CLOCKFORD BETA: LIFTOFF  ✦  ')
              + 'PATENTS PENDING: CLOCKFORD · CRIMP  ✦  OPENSSF SILVER: RATCHET · CRIMP  ✦  ' + tonight + 'CREW: 1 WOLF  ✦  ')
     L = len(items) * 9.9
