@@ -23,6 +23,14 @@ for n, fp in enumerate(frames, 1):
     b = Image.fromarray((bright * 255).astype(np.uint8))
     bloom = (np.asarray(b.filter(ImageFilter.GaussianBlur(W / 90))).astype(np.float32) * .9 + np.asarray(b.filter(ImageFilter.GaussianBlur(W / 28))).astype(np.float32) * .7) / 255
     a = 1 - (1 - a) * (1 - np.clip(bloom, 0, 1))            # screen
+    # lens chromatic aberration: red pushed out, blue pulled in, growing toward the edges
+    def radial(ch, k):
+        im_ = Image.fromarray((np.clip(ch, 0, 1) * 255).astype(np.uint8))
+        w2, h2 = int(W * k), int(H * k)
+        im_ = im_.resize((w2, h2), Image.BILINEAR)
+        l, t = (w2 - W) // 2, (h2 - H) // 2
+        return np.asarray(im_.crop((l, t, l + W, t + H))).astype(np.float32) / 255
+    a = np.stack([radial(a[..., 0], 1.006), a[..., 1], radial(a[..., 2], 0.994) if False else a[..., 2]], -1)
     yy, xx = np.mgrid[0:H, 0:W]
     v = 1 - .5 * np.clip(((xx - W / 2) / (W / 1.6)) ** 2 + ((yy - H / 2) / (H / 1.25)) ** 2, 0, 1)
     a *= v[..., None]

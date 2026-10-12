@@ -15,6 +15,7 @@ MONO = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"
 SANS = "'Helvetica Neue',Helvetica,Arial,sans-serif"
 VOID, STAR, RUST, PAPER, INKL = '#05040a', '#f2f0ea', '#c1440e', '#fbfaf7', '#141414'
 GOLD, GREEN, PINK, CYAN, ORANGE = '#F7CD45', '#39ff88', '#ff2bd6', '#00e5ff', '#ff7a1a'
+ACID = ['#ff2bd6', '#7a5cff', '#00e5ff', '#39ff88', '#fff23a', '#ff7a1a', '#ff2bd6']
 
 
 def uid(*k):
@@ -49,6 +50,25 @@ def frame(h, light=False, rx=22):
         return f'<rect width="{W}" height="{h}" rx="{rx}" fill="{PAPER}"/><rect x="1" y="1" width="{W - 2}" height="{h - 2}" rx="{rx}" fill="none" stroke="{INKL}" stroke-opacity=".15"/>{marks}'
     return (f'<rect width="{W}" height="{h}" rx="{rx}" fill="{VOID}"/><rect width="{W}" height="{h}" rx="{rx}" filter="url(#grain)"/>'
             f'<rect x="1" y="1" width="{W - 2}" height="{h - 2}" rx="{rx}" fill="none" stroke="#fff" stroke-opacity=".12"/>')
+
+
+def acid(attr, off=0, dur=9):
+    v = ACID[off:] + ACID[1:off + 1] if off else ACID
+    return f'<animate attributeName="{attr}" values="{";".join(v)}" dur="{dur}s" repeatCount="indefinite"/>'
+
+
+def nebula(h, seed=1, op=.32):
+    """Acid nebula: soft colour clouds that drift and slowly cycle hue, behind the dark sections."""
+    r = random.Random(seed)
+    k = uid('neb', h, seed)
+    blobs = ''
+    for i in range(5):
+        x, y, rr = r.uniform(0, W), r.uniform(0, h), r.uniform(h * .45, h * .9)
+        blobs += (f'<ellipse cx="{x:.0f}" cy="{y:.0f}" rx="{rr * 1.6:.0f}" ry="{rr * .7:.0f}" fill="{ACID[(i + seed) % 6]}">{acid("fill", (i + seed) % 6, 14 + i * 3)}'
+                  f'<animateTransform attributeName="transform" type="translate" values="0 0;{r.randint(-80, 80)} {r.randint(-30, 30)};0 0" dur="{18 + i * 4}s" repeatCount="indefinite"/></ellipse>')
+    return (f'<defs><filter id="nb{k}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="60"/></filter>'
+            f'<clipPath id="nc{k}"><rect width="{W}" height="{h}" rx="22"/></clipPath></defs>'
+            f'<g clip-path="url(#nc{k})"><g filter="url(#nb{k})" opacity="{op}">{blobs}</g></g>')
 
 
 def mark(cx, cy, s, col=STAR, node=None):
@@ -86,6 +106,7 @@ def patch(i):
     body = (f'<circle cx="{c}" cy="{c}" r="194" fill="#000" opacity=".5" filter="url(#soft)"/>'
             f'<circle cx="{c}" cy="{c}" r="190" fill="url(#thread{k})"/>'                                            # merrowed edge
             f'<circle cx="{c}" cy="{c}" r="190" fill="none" stroke="#000" stroke-opacity=".35" stroke-width="3" stroke-dasharray="2 3"/>'
+            f'<circle cx="{c}" cy="{c}" r="194" fill="none" stroke="{ACID[i]}" stroke-width="3" opacity=".9">{acid("stroke", i, 8)}</circle>'
             f'<circle cx="{c}" cy="{c}" r="176" fill="url(#satin{k})"/>'
             f'<circle cx="{c}" cy="{c}" r="176" fill="none" stroke="{col}" stroke-width="6" stroke-dasharray="7 4" opacity=".9"/>'  # twill border
             f'<circle cx="{c}" cy="{c}" r="112" fill="none" stroke="{col}" stroke-width="2" stroke-dasharray="3 3" opacity=".6"/>'
@@ -137,7 +158,7 @@ def board():
             ('CRIMP', PINK, 'OPEN SOURCE', 'PATENT PENDING · OPENSSF SILVER'),
             ('MARKLODE', CYAN, 'TAKING IDEAS', '24–72 H'),
             ('M.A.X', ORANGE, 'IN THE LAB', 'OFFLINE-FIRST')]
-    body = frame(H) + text(48, 56, f'MISSION BOARD · {TODAY.strftime("%d %b %Y").upper()} · UTC', 13, STAR, .55, ls=5)
+    body = frame(H) + nebula(H, 2, .22) + text(48, 56, f'MISSION BOARD · {TODAY.strftime("%d %b %Y").upper()} · UTC', 13, STAR, .55, ls=5)
     body += f'<line x1="48" y1="74" x2="{W - 48}" y2="74" stroke="#fff" stroke-opacity=".08"/>'
     for i, (n, col, st, info) in enumerate(rows):
         y = 118 + i * 50
@@ -189,7 +210,7 @@ def dread():
             f'<clipPath id="pl"><circle cx="{W / 2}" cy="1180" r="900"/></clipPath><clipPath id="dc"><rect width="{W}" height="{H}" rx="22"/></clipPath>')
     moon = (f'<path d="M-26,-4 C-24,-20 -6,-24 8,-20 C24,-16 30,-2 26,10 C20,24 0,26 -12,20 C-24,14 -28,8 -26,-4Z" fill="#2b2622"/>'
             f'<circle cx="-6" cy="-6" r="4" fill="#1b1714"/><circle cx="10" cy="6" r="3" fill="#1b1714"/>')
-    body = (f'<g clip-path="url(#dc)"><rect width="{W}" height="{H}" fill="{VOID}"/>{stars(110, H, 11)}'
+    body = (f'<g clip-path="url(#dc)"><rect width="{W}" height="{H}" fill="{VOID}"/>{nebula(H, 4, .30)}{stars(110, H, 11)}'
             f'<circle cx="{W / 2}" cy="1180" r="960" fill="url(#atmo)"><animate attributeName="opacity" values="1;1;.7;1;1" keyTimes="0;.35;.5;.65;1" dur="{cyc}s" repeatCount="indefinite"/></circle>'
             f'<circle cx="{W / 2}" cy="1180" r="900" fill="url(#planet)"><animate attributeName="opacity" values="1;1;.72;1;1" keyTimes="0;.35;.5;.65;1" dur="{cyc}s" repeatCount="indefinite"/></circle>'
             f'<g clip-path="url(#pl)"><ellipse cx="0" cy="300" rx="60" ry="24" fill="#000" opacity=".45" filter="url(#soft)"><animate attributeName="cx" values="-200;{W + 200}" dur="{cyc}s" repeatCount="indefinite"/></ellipse></g>'
@@ -301,7 +322,7 @@ def log(light=False):
     body += (f'<polyline points="{pts}" fill="none" stroke="{RUST}" stroke-width="2.5" stroke-dasharray="{L}" stroke-dashoffset="{L}" opacity=".85">'
              f'<animate attributeName="stroke-dashoffset" values="{L};0;0" keyTimes="0;.85;1" dur="10s" repeatCount="indefinite"/></polyline>'
              f'<g><animateMotion path="M{pts.replace(" ", " L")}" dur="10s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;.85;1" calcMode="linear"/>{mark(0, 0, .06, ink)}</g>')
-    lines = [f'LOG {TODAY.strftime("%d %b %Y").upper()} · board refreshed · all missions nominal', 'FOUNDED BY THE ARCHITECT · github.com/thearchitect0x-glitch',
+    lines = [f'LOG {TODAY.strftime("%d %b %Y").upper()} · board refreshed · all missions nominal', 'CO-FOUNDED BY THE ARCHITECT · github.com/thearchitect0x-glitch',
              'LINEAGE · co-producer, Gaming Wall St (HBO Max, 2022)']
     body += ''.join(text(48, 48 + i * 24, l, 13, ink, .7 if i else .9, ls=1) for i, l in enumerate(lines))
     body += text(48, H - 30, 'DEIMOS AI LLC · KEEPING WATCH.', 26, ink, font=SANS, weight=900, ls=4)
@@ -318,15 +339,85 @@ def log(light=False):
         body += (f'<circle cx="{mx:.1f}" cy="{my:.1f}" r="7" fill="{ink}"/><circle cx="{mx:.1f}" cy="{my:.1f}" r="7" fill="none" stroke="{ink}" stroke-width="1.5">'
                  f'<animate attributeName="r" values="7;18" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values=".8;0" dur="2.4s" repeatCount="indefinite"/></circle>'
                  + text(ox, 222, f'DEIMOS · {t["angle"] % 360:.0f}° · SOURCE: JPL HORIZONS · {t["day"]}', 8.5, ink, .6, anchor='middle', ls=.5))
-    return svg(W, H, body, f'Mission log: Deimos AI LLC, founded by the Architect. Tonight: the moon Deimos at its real position around Mars, from NASA JPL Horizons.')
+    return svg(W, H, body, f'Mission log: Deimos AI LLC, co-founded by the Architect. Tonight: the moon Deimos at its real position around Mars, from NASA JPL Horizons.')
+
+
+# ================================================================ THE AGENCY: a NASA-meatball-style emblem for Deimos
+def agency():
+    S, c = 560, 280
+    r = random.Random(21)
+    defs = (f'<radialGradient id="ag"><stop offset="0" stop-color="#14112a"/><stop offset=".75" stop-color="#07060f"/><stop offset="1" stop-color="{VOID}"/></radialGradient>'
+            f'<linearGradient id="vec" x1="0" x2="1"><stop offset="0" stop-color="{PINK}">{acid("stop-color", 0, 7)}</stop><stop offset=".5" stop-color="{CYAN}">{acid("stop-color", 2, 7)}</stop><stop offset="1" stop-color="{GOLD}">{acid("stop-color", 4, 7)}</stop></linearGradient>'
+            f'<path id="agtop" d="M{c - 222},{c} A222,222 0 0 1 {c + 222},{c}"/><path id="agbot" d="M{c - 236},{c} A236,236 0 0 0 {c + 236},{c}"/>'
+            f'<clipPath id="agc"><circle cx="{c}" cy="{c}" r="200"/></clipPath>')
+    stars_ = ''.join(f'<circle cx="{c + r.uniform(-190, 190):.0f}" cy="{c + r.uniform(-190, 190):.0f}" r="{r.choice((1, 1.4, 2))}" fill="#fff"><animate attributeName="opacity" values=".2;1;.2" dur="{r.uniform(2, 6):.1f}s" begin="{r.uniform(0, 4):.1f}s" repeatCount="indefinite"/></circle>' for _ in range(60))
+    # the vector: an acid chevron sweeping across the disc (NASA's red vector, made psychedelic)
+    vec = (f'<path d="M{c - 200},{c + 120} C{c - 60},{c + 40} {c + 40},{c - 60} {c + 230},{c - 150} L{c + 214},{c - 112} C{c + 40},{c - 20} {c - 40},{c + 70} {c - 190},{c + 150} Z" fill="url(#vec)" opacity=".92"/>')
+    orbit = (f'<ellipse cx="{c}" cy="{c}" rx="178" ry="62" fill="none" stroke="#fff" stroke-width="3" transform="rotate(-24 {c} {c})"/>'
+             f'<g transform="rotate(-24 {c} {c})"><circle r="9" fill="#fff" filter="url(#glow)"><animateMotion dur="7s" repeatCount="indefinite" path="M{c - 178},{c} a178,62 0 1,0 356,0 a178,62 0 1,0 -356,0"/></circle></g>')
+    body = (f'<circle cx="{c}" cy="{c}" r="268" fill="#000" opacity=".55" filter="url(#soft)"/>'
+            f'<circle cx="{c}" cy="{c}" r="262" fill="{VOID}" stroke="#fff" stroke-opacity=".9" stroke-width="4"/>'
+            f'<circle cx="{c}" cy="{c}" r="252" fill="none" stroke="url(#vec)" stroke-width="3"/>'
+            f'<circle cx="{c}" cy="{c}" r="200" fill="url(#ag)" stroke="#fff" stroke-width="3"/>'
+            f'<g clip-path="url(#agc)">{stars_}{vec}<circle cx="{c + 150}" cy="{c + 190}" r="120" fill="{RUST}"/><circle cx="{c + 150}" cy="{c + 190}" r="120" fill="none" stroke="#ff8a4a" stroke-width="6" opacity=".6"/></g>'
+            + orbit + f'<g filter="url(#glow)">{mark(c, c - 6, .52)}</g>'
+            f'<text font-family="{SANS}" font-size="40" font-weight="900" letter-spacing="14" fill="#fff"><textPath href="#agtop" startOffset="50%" text-anchor="middle">DEIMOS AI</textPath></text>'
+            f'<text font-family="{MONO}" font-size="17" font-weight="700" letter-spacing="9" fill="#fff" fill-opacity=".85"><textPath href="#agbot" startOffset="50%" text-anchor="middle" dominant-baseline="hanging">CUSTODIMUS · WE KEEP WATCH</textPath></text>'
+            + ''.join(f'<circle cx="{c + 236 * math.cos(math.radians(a))}" cy="{c + 236 * math.sin(math.radians(a))}" r="5" fill="#fff"/>' for a in (180, 0)))
+    return svg(S, S, body, 'The Deimos AI emblem: the Deimos mark in orbit over Mars, an acid vector across a field of stars; motto: Custodimus, we keep watch.', defs)
+
+
+# ================================================================ GO / NO-GO: the flight director's poll
+def poll():
+    H, cyc = 360, 16
+    stations = [('CLOCKFORD', 'OVERSIGHT', GOLD), ('RATCHET', 'EFFECTS', GREEN), ('CRIMP', 'DECISIONS', PINK), ('MARKLODE', 'RECON', CYAN), ('M.A.X', 'BASELINE', ORANGE)]
+    body = frame(H) + nebula(H, 6, .2) + text(48, 54, 'FLIGHT DIRECTOR · GO / NO-GO FOR LAUNCH', 14, STAR, .6, ls=5)
+    body += text(W - 48, 54, f'T–{DAYS} · 10 NOV 2026' if DAYS > 0 else 'LIFTOFF', 14, GOLD, .9, anchor='end', ls=4)
+    cw, gap, x0, y0 = 220, 20, 50, 90
+    for i, (n, role, col) in enumerate(stations):
+        x = x0 + i * (cw + gap)
+        a = (1.2 + i * 1.6) / cyc
+        body += (f'<rect x="{x}" y="{y0}" width="{cw}" height="170" rx="14" fill="#0b0a12" stroke="{col}" stroke-opacity=".4"/>'
+                 + text(x + 18, y0 + 34, n, 18, col, weight=700, ls=2) + text(x + 18, y0 + 56, role, 11, STAR, .55, ls=3)
+                 # the lamp: amber STANDBY until polled, then GO
+                 + f'<rect x="{x + 18}" y="{y0 + 76}" width="{cw - 36}" height="56" rx="10" fill="#3a2a00">'
+                 f'<animate attributeName="fill" values="#3a2a00;#3a2a00;#0f5c2c;#0f5c2c;#3a2a00" keyTimes="0;{a:.3f};{a + .01:.3f};.95;1" dur="{cyc}s" repeatCount="indefinite"/></rect>'
+                 + f'<g><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;{a:.3f};{a + .01:.3f};.95;1" dur="{cyc}s" repeatCount="indefinite"/>{text(x + cw / 2, y0 + 112, "STANDBY", 18, "#ffb020", weight=900, anchor="middle", ls=4)}</g>'
+                 + f'<g opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;{a:.3f};{a + .01:.3f};.95;1" dur="{cyc}s" repeatCount="indefinite"/>{text(x + cw / 2, y0 + 116, "GO", 34, GREEN, weight=900, anchor="middle", ls=8, extra="filter=\"url(#glow)\"")}</g>'
+                 + f'<g opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;{a - .04:.3f};{a - .035:.3f};{a:.3f};{a + .005:.3f}" dur="{cyc}s" repeatCount="indefinite"/>{text(x + cw / 2, y0 + 156, n + "?", 12, STAR, .8, anchor="middle", ls=2)}</g>')
+    fin = (1.2 + 5 * 1.6) / cyc
+    body += (f'<g opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;{fin:.3f};{fin + .02:.3f};.95;1" dur="{cyc}s" repeatCount="indefinite"/>'
+             + text(W / 2, H - 40, 'ALL STATIONS GO.', 30, GREEN, font=SANS, weight=900, anchor='middle', ls=10, extra='filter="url(#glow)"') + '</g>')
+    return svg(W, H, body, 'Go / no-go for launch: Clockford, Ratchet, Crimp, Marklode and M.A.X each report GO; all stations go.')
+
+
+# ================================================================ the telemetry ticker
+def ticker():
+    H = 54
+    tonight = ''
+    p = A / 'tonight.json'
+    if p.exists():
+        tonight = f'TONIGHT: DEIMOS {json.loads(p.read_text())["angle"] % 360:.0f}° AROUND MARS (JPL HORIZONS)  ✦  '
+    items = ('DEIMOS AI LLC  ✦  MISSION CONTROL FOR THE AGE OF AGENTS  ✦  '
+             + (f'CLOCKFORD PRIVATE BETA T–{DAYS}  ✦  ' if DAYS > 0 else 'CLOCKFORD BETA: LIFTOFF  ✦  ')
+             + 'PATENTS PENDING: CLOCKFORD · CRIMP  ✦  OPENSSF SILVER: RATCHET · CRIMP  ✦  ' + tonight + 'CREW: 1 WOLF  ✦  ')
+    L = len(items) * 9.9
+    k = uid('tick')
+    body = (f'<rect width="{W}" height="{H}" rx="14" fill="{VOID}"/><rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="14" fill="none" stroke="url(#tk{k})" stroke-width="1.5"/>'
+            f'<defs><linearGradient id="tk{k}" x1="0" x2="1"><stop offset="0" stop-color="{PINK}">{acid("stop-color", 0, 6)}</stop><stop offset="1" stop-color="{CYAN}">{acid("stop-color", 3, 6)}</stop></linearGradient>'
+            f'<clipPath id="tc{k}"><rect x="10" width="{W - 20}" height="{H}"/></clipPath></defs>'
+            f'<g clip-path="url(#tc{k})"><g>{text(20, 34, items * 3, 16, STAR, .9, ls=1.2)}'
+            f'<animateTransform attributeName="transform" type="translate" values="0 0;{-L:.0f} 0" dur="{L / 60:.0f}s" repeatCount="indefinite"/></g></g>')
+    return svg(W, H, body, 'Telemetry: Deimos AI, mission control for the age of agents; Clockford beta countdown; patents pending; OpenSSF Silver; tonight\'s Deimos.')
 
 
 def main():
     A.mkdir(parents=True, exist_ok=True)
-    out = {'board.svg': board(), 'rules-dark.svg': rules(False), 'rules-light.svg': rules(True), 'dread.svg': dread(), 'hatch.svg': hatch(),
+    out = {'agency.svg': agency(), 'poll.svg': poll(), 'board.svg': board(), 'rules-dark.svg': rules(False), 'rules-light.svg': rules(True), 'dread.svg': dread(), 'hatch.svg': hatch(),
            'boarding-dark.svg': boarding(False), 'boarding-light.svg': boarding(True), 'log-dark.svg': log(False), 'log-light.svg': log(True)}
     for i, p in enumerate(PATCHES):
         out[f'patch-{p[0].lower().replace(".", "")}.svg'] = patch(i)
+    out['ticker.svg'] = ticker()
     for n, s in out.items():
         (A / n).write_text(s, encoding='utf-8'); print(f'{n:20} {len(s) // 1024:4d} KB')
 

@@ -51,7 +51,25 @@ nt.links.new(vor.outputs['Distance'], ramp.inputs['Fac'])
 mix = nt.nodes.new('ShaderNodeMix'); mix.data_type = 'RGBA'; mix.inputs['Factor'].default_value = 1.0
 mix.inputs['A'].default_value = (0.004, 0.003, 0.012, 1)
 add = nt.nodes.new('ShaderNodeMath'); add.operation = 'MULTIPLY'
-nt.links.new(ramp.outputs['Color'], bg.inputs['Color']); bg.inputs['Strength'].default_value = 1.4
+# acid nebula: two noise fields coloured violet → magenta → cyan, masked so it drifts in clouds, added to the stars
+n1 = nt.nodes.new('ShaderNodeTexNoise'); n1.inputs['Scale'].default_value = 2.6; n1.inputs['Detail'].default_value = 9; n1.inputs['Roughness'].default_value = 0.62
+n2 = nt.nodes.new('ShaderNodeTexNoise'); n2.inputs['Scale'].default_value = 3.4; n2.inputs['Detail'].default_value = 6
+nt.links.new(tc.outputs['Generated'], n1.inputs['Vector']); nt.links.new(tc.outputs['Generated'], n2.inputs['Vector'])
+neb = nt.nodes.new('ShaderNodeValToRGB'); cr = neb.color_ramp
+cr.elements[0].position, cr.elements[0].color = 0.38, (0, 0, 0, 1)
+cr.elements[1].position, cr.elements[1].color = 0.72, (0.0, 0.75, 0.95, 1)
+e1 = cr.elements.new(0.5); e1.color = (0.10, 0.02, 0.26, 1)
+e2 = cr.elements.new(0.6); e2.color = (0.75, 0.04, 0.55, 1)
+nt.links.new(n1.outputs['Fac'], neb.inputs['Fac'])
+mask = nt.nodes.new('ShaderNodeValToRGB'); mask.color_ramp.elements[0].position = 0.47; mask.color_ramp.elements[1].position = 0.74
+nt.links.new(n2.outputs['Fac'], mask.inputs['Fac'])
+mul = nt.nodes.new('ShaderNodeMix'); mul.data_type = 'RGBA'; mul.blend_type = 'MULTIPLY'; mul.inputs['Factor'].default_value = 1.0
+nt.links.new(neb.outputs['Color'], mul.inputs['A']); nt.links.new(mask.outputs['Color'], mul.inputs['B'])
+scl = nt.nodes.new('ShaderNodeVectorMath'); scl.operation = 'SCALE'; scl.inputs['Scale'].default_value = 0.55
+nt.links.new(mul.outputs['Result'], scl.inputs[0])
+addc = nt.nodes.new('ShaderNodeVectorMath'); addc.operation = 'ADD'
+nt.links.new(ramp.outputs['Color'], addc.inputs[0]); nt.links.new(scl.outputs['Vector'], addc.inputs[1])
+nt.links.new(addc.outputs['Vector'], bg.inputs['Color']); bg.inputs['Strength'].default_value = 1.4
 nt.links.new(bg.outputs[0], out.inputs['Surface'])
 
 # ---------------------------------------------------------------- Mars, lower right, with a rim of atmosphere
@@ -126,7 +144,12 @@ ring = bpy.context.object; ring.data.materials.append(mat('ringglow', emission((
 # acid accents: two faint coloured halo rings that breathe
 for i, (col, rr) in enumerate((((1.0, 0.17, 0.84), R * 1.32), ((0.0, 0.9, 1.0), R * 1.55))):
     bpy.ops.mesh.primitive_torus_add(major_radius=rr, minor_radius=0.02, major_segments=192, minor_segments=8, location=(0, 0, -cz))
-    h = bpy.context.object; h.data.materials.append(mat(f'halo{i}', emission(col, 6))); h.parent = pivot
+    h = bpy.context.object; hm = mat(f'halo{i}', emission(col, 6)); h.data.materials.append(hm); h.parent = pivot
+    # acid: the halo rings cycle through the palette, out of phase with each other
+    sock = [n for n in hm.node_tree.nodes if n.type == 'EMISSION'][0].inputs['Color']
+    acid = [(1.0, 0.17, 0.84), (0.48, 0.36, 1.0), (0.0, 0.9, 1.0), (0.22, 1.0, 0.53), (1.0, 0.95, 0.23), (1.0, 0.48, 0.1)]
+    for k in range(F_END // 24 + 2):
+        sock.default_value = (*acid[(k + i * 3) % len(acid)], 1); sock.keyframe_insert('default_value', frame=1 + k * 24)
 
 # camera looks along +Y; the logo view = the tetrahedron's apex pointing at the camera (-Y), one base vertex up
 cam_d = bpy.data.cameras.new('cam'); cam_d.lens = 50; cam = bpy.data.objects.new('cam', cam_d); sc.collection.objects.link(cam); sc.camera = cam
