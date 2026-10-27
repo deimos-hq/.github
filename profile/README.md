@@ -5,6 +5,7 @@
 <h3 align="center">Mission control for AI agents.</h3>
 <p align="center">
 <a href="https://deimoscore.com"><b>Deimos AI LLC</b></a> builds the controls that keep people in charge of what their AI agents do: seen, approved, stoppable and provable.<br>
+<a href="https://github.com/deimos-hq/wardlatch"><b>Wardlatch</b></a>: free, open-source check for this month's leaks and exploited flaws, run on your own machine; sends nothing ·
 <a href="https://clockford.com"><b>Clockford</b></a>: see, approve and stop your AI agents from your phone, whichever company built them. Patent pending; private beta 10 Nov 2026 ·
 <a href="https://ratchetgate.com"><b>Ratchet</b></a>: the effect gate for AI agents; a retried charge, deploy or email happens at most once ·
 <a href="https://github.com/thearchitect0x-glitch/crimp"><b>Crimp</b></a>: open-source decision gate; the decision withdraws itself when a fact breaks ·
@@ -12,6 +13,12 @@
 <a href="https://deimoscore.com"><b>M.A.X</b></a>: offline-first behavioral analysis for litigation teams.<br>
 <sub>AI agent security · agent governance · human-in-the-loop approval · AI guardrails · OpenSSF Best Practices Silver (Ratchet, Crimp)</sub>
 </p>
+
+<h3 align="center">Free now: Wardlatch</h3>
+<p align="center"><a href="https://www.deimoscore.com/wardlatch/"><img src="assets/wardlatch.png" width="100%" alt="Wardlatch, free and open source: is your machine exposed? The leaked eMudhra keys, PHP's critical flaws, backdoored WordPress plugins and more. Check, then apply the patch for each. Sends nothing."></a></p>
+<p align="center">On a computer with Node.js: <code>npx wardlatch@latest</code><br>
+<sub>SAFE only when a program on your machine was asked and refused · EXPOSED when it accepted · UNKNOWN when it couldn't be asked, never rounded up to SAFE</sub><br>
+<a href="https://www.deimoscore.com/wardlatch/">How it works</a> · <a href="https://github.com/deimos-hq/wardlatch">Source</a> · <a href="https://www.npmjs.com/package/wardlatch">npm</a> · <a href="https://github.com/deimos-hq/wardlatch/releases/latest">Latest release</a> · <a href="https://github.com/deimos-hq/wardlatch/security/advisories">Advisories, including our own</a> · <a href="https://www.deimoscore.com/wardlatch/mac/">The Mac fix</a></p>
 
 <p align="center"><a href="https://deimoscore.com"><img src="assets/agency.svg" width="46%" alt="The Deimos AI emblem: the Deimos mark in orbit over Mars, an acid vector across a field of stars; motto: Custodimus, we keep watch."></a></p>
 
