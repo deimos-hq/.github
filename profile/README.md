@@ -36,6 +36,13 @@ A flaw in Wardlatch itself is fixed, released, and then disclosed in a published
 
 ### Our other work
 
+<p>
+<a href="https://ratchetgate.com/"><img src="assets/patch-ratchet.webp" width="112" alt="Ratchet patch: a twelve-point star holding the number 1, ringed by the words RATCHET and ONCE"></a>
+<a href="https://www.deimoscore.com/crimp/"><img src="assets/patch-crimp.webp" width="112" alt="Crimp patch: a sheet of paper with a wax seal, ringed by the words CRIMP and ACCOUNTABLE"></a>
+<a href="https://www.deimoscore.com/clockford/"><img src="assets/patch-clockford.webp" width="112" alt="Clockford patch: a small white robot with long ears, ringed by the words CLOCKFORD and OVERSIGHT"></a>
+<a href="https://www.deimoscore.com/marklode/"><img src="assets/patch-marklode.webp" width="112" alt="Marklode patch: a folder stamped VERDICT, ringed by the words MARKLODE and RECON"></a>
+</p>
+
 **Ratchet** is live: the effect gate for AI agents, so that a retried charge, deploy or email is started at most once ([ratchetgate.com](https://ratchetgate.com/)).
 If an agent dies before reporting, the effect is marked indeterminate instead of guessed, and your policy decides what happens next ([ratchetgate.com](https://ratchetgate.com/)).
 In a published run on the live service, a script standing in for a runaway agent made 100 concurrent charge attempts against a ceiling of 20 an hour, and the gate let 20 through and denied 80 ([the run](https://ratchetgate.com/notes/what-happens-when-step-five-fails)).
