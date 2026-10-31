@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/hero.webp" width="100%" alt="Deimos AI: the moon Deimos orbits Mars as the Deimos mark turns in three dimensions and locks into place."></p>
+
 ## Deimos AI LLC
 
 Deimos AI LLC builds software for the people who run AI agents, so that what an agent does is seen, approved, stoppable and provable ([deimoscore.com](https://www.deimoscore.com/), [press kit](https://www.deimoscore.com/brand/)).
@@ -7,6 +9,8 @@ Our site keeps a Record of our claims, each with its status, its source and the 
 
 **UNKNOWN is never rounded up to SAFE** ([assurance case, R1](https://github.com/deimos-hq/wardlatch/blob/main/ASSURANCE_CASE.md)): Wardlatch's first requirement is that a line says SAFE only after a control has shown the check could have seen exposure, and that when it cannot tell, the line says UNKNOWN (could not be tested) and the run does not end with exit code 0 ([exit codes](https://github.com/deimos-hq/wardlatch#reference)).
 Several of Wardlatch's published advisories are about falling short of that, and say so in their titles ([Wardlatch's advisories](https://github.com/deimos-hq/wardlatch/security/advisories)).
+
+<p align="center"><a href="https://www.deimoscore.com/"><img src="assets/agency.svg" width="46%" alt="The Deimos AI emblem: the Deimos mark in orbit over Mars, an acid vector across a field of stars; motto: Custodimus, we keep watch."></a></p>
 
 ### Wardlatch: free, on your own computer
 
@@ -83,6 +87,8 @@ Please do not report a vulnerability in a public issue ([policy](https://www.dei
 You can sponsor Deimos AI LLC through [GitHub Sponsors](https://github.com/sponsors/deimos-hq).
 Sponsorship never buys a result: no one can pay for a check to read SAFE or for a product to be left out of one, and no sponsor's name appears next to a result ([the listing](https://github.com/sponsors/deimos-hq)).
 Deimos AI LLC is a company, so sponsorship is not a tax-deductible donation ([the listing](https://github.com/sponsors/deimos-hq)).
+
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/rules-dark.svg"><img src="assets/rules-light.svg" width="100%" alt="Flight rules: FR-1 people stay in charge of what matters; FR-2 assume something is already inside; FR-3 if it matters, make it provable; FR-4 bend, don't break."></picture><img src="assets/dread.svg" width="100%" alt="Named for dread: the moon Deimos crosses Mars. We were named for it. We build so you never feel it."></p>
 
 ---
 
